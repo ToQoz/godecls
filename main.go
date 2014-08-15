@@ -19,6 +19,7 @@ var (
 	exitCode = 0
 	list     = flag.Bool("l", false, "Ouput list of fileames that will be targeted by godecls.")
 	noHeader = flag.Bool("h", false, "Never print filenames with output lines.")
+	header   = flag.Bool("H", false, "Force print filenames with output lines.")
 )
 
 func report(err error) {
@@ -134,13 +135,13 @@ func proccessFile(filename string, out io.Writer, in io.Reader) error {
 			}
 
 			for _, spec := range decl.Specs {
-				if !*noHeader {
+				if !*noHeader || *header {
 					fmt.Fprint(out, filename+":")
 				}
 				fprintlnNode(out, fset, decl.Tok.String()+" ", spec)
 			}
 		case *ast.FuncDecl:
-			if !*noHeader {
+			if !*noHeader || *header {
 				fmt.Fprint(out, filename+":")
 			}
 			fprintlnNode(out, fset, "", decl)
