@@ -18,7 +18,7 @@ import (
 var (
 	exitCode = 0
 	list     = flag.Bool("l", false, "Ouput list of fileames that will be targeted by godecls.")
-	noHeader = flag.Bool("h", false, "Never print headers(i.e. filenames) with output lines.")
+	noheader = flag.Bool("h", false, "Never print headers(i.e. filenames) with output lines.")
 	header   = flag.Bool("H", false, "Force print headers(i.e. filenames) with output lines.")
 	nline    = flag.Bool("n", false, "Print line numbers in header")
 )
@@ -60,7 +60,7 @@ func main() {
 					report(err)
 				}
 			} else {
-				*noHeader = true
+				*noheader = true
 				if err := proccessFile(flag.Arg(i), os.Stdout, nil); err != nil {
 					report(err)
 				}
@@ -108,7 +108,7 @@ func proccessFile(filename string, out io.Writer, in io.Reader) error {
 		defer f.Close()
 		in = f
 	} else {
-		*noHeader = true
+		*noheader = true
 	}
 
 	src, err := ioutil.ReadAll(in)
@@ -150,7 +150,7 @@ func proccessFile(filename string, out io.Writer, in io.Reader) error {
 }
 
 func genHeader(fset *token.FileSet, n ast.Node) (h string) {
-	if !*noHeader || *header {
+	if !*noheader || *header {
 		position := fset.Position(n.Pos())
 		h = position.Filename + ":"
 		if *nline {
