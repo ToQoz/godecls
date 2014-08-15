@@ -136,29 +136,28 @@ func proccessFile(filename string, out io.Writer, in io.Reader) error {
 			}
 
 			for _, spec := range decl.Specs {
-				if !*noHeader || *header {
-					h := filename + ":"
-					if *nline {
-						h += fmt.Sprintf("%d:", fset.Position(spec.Pos()).Line)
-					}
-					fmt.Fprint(out, h)
-				}
+				fmt.Fprint(out, genHeader(fset, spec))
 				fprintlnNode(out, fset, decl.Tok.String()+" ", spec)
 			}
 		case *ast.FuncDecl:
-			if !*noHeader || *header {
-				h := filename + ":"
-				if *nline {
-					h += fmt.Sprintf("%d:", fset.Position(decl.Pos()).Line)
-				}
-				fmt.Fprint(out, h)
-			}
+			fmt.Fprint(out, genHeader(fset, decl))
 			fprintlnNode(out, fset, "", decl)
 		}
 
 	}
 
 	return nil
+}
+
+func genHeader(fset *token.FileSet, n ast.Node) (h string) {
+	if !*noHeader || *header {
+		position := fset.Position(n.Pos())
+		h = position.Filename + ":"
+		if *nline {
+			h += fmt.Sprintf("%d:", position.Line)
+		}
+	}
+	return
 }
 
 func fprintlnNode(w io.Writer, fset *token.FileSet, prefix string, node ast.Node) error {
